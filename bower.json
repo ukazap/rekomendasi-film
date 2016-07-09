@@ -1,0 +1,28 @@
+{
+  "name": "rekomendasi-film",
+  "authors": [
+    "Ukaza Perdana <ukazap@live.com>"
+  ],
+  "description": "Aplikasi rekomendasi film berdasarkan rating menggunakan algoritma Pearson Correlation Coefficient",
+  "main": "index.html",
+  "keywords": [
+    "rekomendasi",
+    "film",
+    "pengenalan-pola"
+  ],
+  "license": "MIT",
+  "homepage": "https://github.com/ukazap/rekomendasi-film/",
+  "private": true,
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ],
+  "dependencies": {
+    "bootstrap": "v4.0.0-alpha.2",
+    "jquery-csv": "^0.8.2",
+    "autocompletelikegoogle": "^1.2.6"
+  }
+}
