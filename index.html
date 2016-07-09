@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <meta name="description" content="Aplikasi rekomendasi film berdasarkan rating menggunakan algoritma Pearson Correlation Coefficient">
+  <meta name="author" content="Ukaza Perdana <ukazap@live.com>">
+  <title>Rekomendasi Film</title>
+  <link rel="stylesheet" type="text/css" href="bower_components/bootstrap/dist/css/bootstrap.css">
+  <link rel="stylesheet" type="text/css" href="bower_components/bootstrap/dist/css/sticky-footer.css">
+  <link rel="stylesheet" type="text/css" href="bower_components/autocompletelikegoogle/jquery.autocomplete.css">
+</head>
+<body>
+  <div class="container">
+    <div class="page-header m-t-1">
+      <h1>Rekomendasi Film</h1>
+      <p class="lead">Isi film-film apa saja yang pernah kamu tonton dan berikan rating 1-5, kemudian tekan tombol hijau besar itu.</p>
+    </div>
+    <div class="row">
+      <div class="col-sm-4">
+        <div class="card card-block card-inverse card-info">
+            <h4 class="card-title">Film kamu:</h4>
+            <div class="sudah-nonton"></div>
+            <div class="form-inline form-group">
+              <input type="text" id="input-judul" class="form-control">
+              <button id="button-tambah" class="btn btn-primary form-control">tambah</button>
+            </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <footer class="footer">
+    <div class="container">
+      <span class="text-muted">
+        <a href="http://ukazap.js.org/" rel="me">&leftarrow; Ukaza Perdana</a>
+        (Dataset diperoleh dari
+        <a href="http://grouplens.org/datasets/">http://grouplens.org/datasets/</a>).
+      </span>
+    </div>
+  </footer>
+  <script src="bower_components/jquery/dist/jquery.js"></script>
+  <script src="bower_components/bootstrap/dist/js/bootstrap.js"></script>
+  <script src="bower_components/jquery-csv/src/jquery.csv.js"></script>
+  <script src="bower_components/autocompletelikegoogle/jquery.autocomplete.js"></script>
+  <script src="rekomendasi-film.js"></script>
+</body>
+</html>
