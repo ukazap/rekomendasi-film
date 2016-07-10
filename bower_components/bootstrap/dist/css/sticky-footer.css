@@ -34,3 +34,5 @@ body {
 body { background-image: linear-gradient(0deg,#fff,#1880E6,#001351); }
 
 #carbonads-container {display:none} [data-anchorjs-icon]::after {content:""} h1[id] {padding-top:0px; margin-top:20px} .zero-clipboard {display:none !important} .bd-sidebar {display:none !important} .bd-content {right:0px !important; width:100% !important} .bs-old-docs {display:none} .bs-social {display:none} .bs-sidebar {display:none !important} .col-md-9[role=main] {width:100% !important} .navbar-fixed-top {position:absolute !important}
+
+.rating { display: inline; width:4em; height: 2em; }
