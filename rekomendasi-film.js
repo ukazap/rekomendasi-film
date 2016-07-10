@@ -1,3 +1,5 @@
+// AMBIL DATA
+// ==========
 var lokasi_dataset = "dataset/ml-latest-small/";
 var links, movies, ratings, tags, titles;
 var req1 = $.get(lokasi_dataset+"links.csv", function(data){ links = $.csv.toObjects(data); });
@@ -17,6 +19,8 @@ $.when(req1, req2, req3, req4).done(function() {
   $("#input-judul").val("");
 });
 
+// TAMBAH & HAPUS FILM
+// ===================
 function hapus(nomorItem) {
   $("#item"+nomorItem).remove();
 }
@@ -33,7 +37,7 @@ $("#button-tambah").click(function() {
 
   var inputJudul = $("#input-judul").val().trim();
   if (inputJudul != "" && $(".judul:contains('"+inputJudul+"')").length == 0) {
-    $("#film-pengguna").append("<li class='list-group-item' id='item"+nomor+"'><span class='judul'>"+inputJudul+"</span><div class='pull-xs-right'><input type='number' class='rating form-control' min='0' value='0' max='5' step='0.1'><button class='btn btn-sm btn-danger' onclick='hapus("+nomor+");'>x</button>");
+    $("#film-pengguna").append("<li class='list-group-item' id='item"+nomor+"'><span class='judul'>"+inputJudul+"</span><div class='pull-xs-right'><input type='number' class='rating form-control' min='0.5' value='0.5' max='5' step='0.5'><button class='btn btn-sm btn-danger' onclick='hapus("+nomor+");'>x</button>");
   }
 
   $("#input-judul").val("");
