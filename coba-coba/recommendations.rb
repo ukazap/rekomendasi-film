@@ -45,7 +45,6 @@
     'Superman Returns' => 4.0 }
 }
 
-
 # Returns a distance-based similarity score for person1 and person2
 def sim_distance(prefs, person1, person2)
   # Get the list of shared_items
@@ -128,5 +127,60 @@ def get_recommendations(prefs, person, similarity=:sim_pearson)
     [total / sim_sums[item], item]
   end
   # Return the sorted list
+  rankings.sort.reverse
+end
+
+# Item-based Filtering
+# ====================
+def transform_prefs(prefs)
+  result = {}
+  prefs.keys.each do |person|
+    prefs[person].keys.each do |item|
+      result[item] ||= {}
+      # Flip item and person
+      result[item][person] = prefs[person][item]
+    end
+  end
+  return result
+end
+
+def calculate_similar_items(prefs,n=10)
+  # Create a dictionary of items showing which other items they are most similar to.
+  result = {}
+  # Invert the preference matrix to be item-centric
+  item_prefs = transform_prefs(prefs)
+  c = 0
+  item_prefs.keys.each do |item|
+    # Status updates for large datasets
+    c += 1
+    puts "#{c} / #{item_prefs.length}" if (c % 100).zero?
+    # Find the most similar items to this one
+    scores = top_matches(item_prefs, item, n, :sim_distance)
+    result[item] = scores
+  end
+  return result
+end
+
+def get_recommended_items(prefs, item_match, user)
+  user_ratings = prefs[user]
+  scores = {}
+  total_sim = {}
+  # Loop over items rated by this user
+  user_ratings.each do |item, rating|
+    # Loop over items similar to this one
+    item_match[item].each do |similarity, item2|
+      # Ignore if this user has already rated this item
+      next if user_ratings.include? item2
+      # Weighted sum of rating times similarity
+      scores[item2] ||= 0
+      scores[item2] += similarity * rating
+      # Sum of all the similarities
+      total_sim[item2] ||= 0
+      total_sim[item2] += similarity
+    end
+  end
+  # Divide each total score by total weighting to get an average
+  rankings = scores.map { |item, score| [score/total_sim[item], item] }
+  # Return the rankings from highest to lowest
   rankings.sort.reverse
 end
