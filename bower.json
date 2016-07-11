@@ -3,7 +3,7 @@
   "authors": [
     "Ukaza Perdana <ukazap@live.com>"
   ],
-  "description": "Aplikasi rekomendasi film berdasarkan rating menggunakan algoritma Pearson Correlation Coefficient",
+  "description": "Aplikasi rekomendasi film berdasarkan rating menggunakan Pearson Correlation Coefficient atau (Euclidean Distance)",
   "main": "index.html",
   "keywords": [
     "rekomendasi",
