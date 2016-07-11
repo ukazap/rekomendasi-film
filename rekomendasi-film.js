@@ -1,12 +1,13 @@
 // AMBIL DATA
 // ==========
 var lokasiDataset = "dataset/ml-latest-small/";
+var pakaiEuclidean = window.location.hash.contains("#euclidean");
 var movies, tags, links, autocompleteTitles;
+var kemiripanItem = [];
 var req1 = $.get(lokasiDataset+"movies.csv", function(data){ movies = $.csv.toArrays(data); });
 var req2 = $.get(lokasiDataset+"tags.csv", function(data){ tags = $.csv.toArrays(data); });
 var req3 = $.get(lokasiDataset+"links.csv", function(data){ links = $.csv.toArrays(data); });
-var kemiripanItem = [];
-var req4 = $.get(lokasiDataset+"kemiripan.csv", function(data){ 
+var req4 = $.get(lokasiDataset+(pakaiEuclidean ? "kemiripan-euclidean.csv" : "kemiripan.csv"), function(data){ 
   $.csv.toArrays(data).slice(1).forEach(function(row) {
     var idFilm = row[0];
     if (typeof(kemiripanItem[idFilm]) == "undefined") { kemiripanItem[idFilm] = []; }
@@ -117,5 +118,12 @@ $(document).ready(function(){
   }
   else if (window.location.host != "localhost") {
     alert("DISCLAIMER:\nIni aplikasi asal-asalan."); // http://ukazap.js.org/rekomendasi-film
+  }
+
+  if (pakaiEuclidean) {
+    $("#ganti-metode").attr("href", "#pearson");
+    $("#metode").text("Euclidean Distance");
+  } else {
+    $("#metode").text("Pearson Correlation Coefficient");
   }
 });
