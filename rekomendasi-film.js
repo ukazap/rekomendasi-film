@@ -32,20 +32,52 @@ $.when(req1, req2, req3, req4).done(function() {
     preferensi = JSON.parse(localStorage.getItem("preferensi"));
     for (nomor in preferensi) {
       var inputJudul = movies.find(function(m){ return m[0] == nomor })[1];
-      $("#film-pengguna").append("<li class='list-group-item form-inline' id='item"+nomor+"'><span class='judul'>"+inputJudul+"</span><div class='pull-xs-right'><input type='number' id='rating"+nomor+"' class='form-control' min='0.5' value='"+preferensi[nomor]+"' max='5' step='0.5' onchange='ubahRating("+nomor+")'><button class='btn btn-sm btn-danger form-control' onclick='hapus("+nomor+");'>x</button></li>");
+      tambahFilmPengguna(inputJudul);
     }
-    $("#button-reset").show();
-    $(".card-rekomendasi").show();
     $("#button-cari").click();
   }
 });
 
 // TAMBAH & HAPUS FILM
 // ===================
-function hapus(nomorItem) {
-  $("#item"+nomorItem).remove();
-  delete preferensi[nomorItem];
-  $("#film-pengguna").change();
+function tambahFilmPengguna(inputJudul) {
+  var judulnyaIni = $(".judul:contains(\""+inputJudul+"\")");
+  if (inputJudul != "" && autocompleteTitles.indexOf(inputJudul) != -1 && judulnyaIni.length == 0) {
+    var f = movies.find(function(m){ return m[1] == inputJudul });
+    var nomor = f[0], genre = f[2].replace(/\|/g, ", ");
+    var idImdb = links.find(function(l){ return l[0] == nomor })[1];
+    $("#film-pengguna").append("\
+      <li class='list-group-item' id='item"+nomor+"'>\
+        <div class='form-inline'>\
+          <a class='judul' href='http://www.imdb.com/title/"+idImdb+"/' target='_blank'>"+inputJudul+"</a>\
+          <div class='pull-xs-right'>\
+            <input class='form-control' id='rating"+nomor+"' min='0.5' value='0.5' max='5' step='0.5' onchange='ubahRating("+nomor+")' type='number'>\
+            <button class='btn btn-sm btn-danger' onclick='hapus("+nomor+")'>x</button>\
+          </div>\
+        </div>\
+        <small>"+genre+"</small>\
+      </li>");
+    preferensi[nomor] = 0.5;
+    localStorage.setItem("preferensi", JSON.stringify(preferensi));
+    $("#film-pengguna").change();
+    return true;
+  }
+  return false;
+}
+
+$("#button-tambah").click(function() {
+  var inputJudul  = $("#input-judul").val().trim();
+  if (tambahFilmPengguna(inputJudul)) {
+    $("#input-judul").val("");
+  } else {
+    alert("Isi judul yang benar!");
+    $("#input-judul").focus();
+  }
+});
+
+function tambahDariRekomendasi(id) {
+  var inputJudul = movies.find(function(m){ return m[0] == id })[1];
+  tambahFilmPengguna(inputJudul);
 }
 
 function ubahRating(nomorItem, rating) {
@@ -53,11 +85,10 @@ function ubahRating(nomorItem, rating) {
   localStorage.setItem("preferensi", JSON.stringify(preferensi));
 }
 
-function tambahDariRekomendasi(id) {
-  var judulSebelumnya = $("#input-judul").val();
-  $("#input-judul").val(movies.find(function(m){ return m[0] == id })[1]);
-  $("#button-tambah").click();
-  $("#input-judul").val(judulSebelumnya);
+function hapus(nomorItem) {
+  $("#item"+nomorItem).remove();
+  delete preferensi[nomorItem];
+  $("#film-pengguna").change();
 }
 
 $("#button-reset").click(function() {
@@ -67,19 +98,6 @@ $("#button-reset").click(function() {
       $("#film-pengguna").empty();
       $("#film-pengguna").change();
     }
-  }
-});
-
-$("#button-tambah").click(function() {
-  var inputJudul  = $("#input-judul").val().trim();
-  var judulnyaIni = $(".judul:contains(\""+inputJudul+"\")");
-  if (inputJudul != "" && autocompleteTitles.indexOf(inputJudul) != -1 && judulnyaIni.length == 0) {
-    var nomor = movies.find(function(m){ return m[1] == inputJudul })[0]
-    $("#film-pengguna").append("<li class='list-group-item form-inline' id='item"+nomor+"'><span class='judul'>"+inputJudul+"</span><div class='pull-xs-right'><input type='number' id='rating"+nomor+"' class='form-control' min='0.5' value='0.5' max='5' step='0.5' onchange='ubahRating("+nomor+")'><button class='btn btn-sm btn-danger form-control' onclick='hapus("+nomor+");'>x</button></li>");
-    preferensi[nomor] = 0.5;
-    localStorage.setItem("preferensi", JSON.stringify(preferensi));
-    $("#input-judul").val("");
-    $("#film-pengguna").change();
   }
 });
 
@@ -99,8 +117,8 @@ $("#film-pengguna").change(function() {
 // CARI REKOMENDASI
 // ================
 function cariRekomendasi(ratingPengguna, kemiripanItem) {
-  scores = {}
-  totalKemiripan = {}
+  scores = {};
+  totalKemiripan = {};
   // Looping item2 yang di-rating oleh pengguna
   for (r in ratingPengguna) {
     var item = r, rating = ratingPengguna[r];
@@ -110,11 +128,11 @@ function cariRekomendasi(ratingPengguna, kemiripanItem) {
       // Abaikan bila pengguna sudah me-rating item ini
       if (!ratingPengguna.hasOwnProperty(item2)) {
         // Jumlah bobot kemiripan dikali kemiripan
-        scores[item2] || (scores[item2] = 0)
+        scores[item2] || (scores[item2] = 0);
         scores[item2] += kemiripan * rating;
         // Jumlah seluruh kemiripan
-        totalKemiripan[item2] || (totalKemiripan[item2] = 0)
-        totalKemiripan[item2] += kemiripan
+        totalKemiripan[item2] || (totalKemiripan[item2] = 0);
+        totalKemiripan[item2] += kemiripan;
       }
     });
   }
@@ -135,8 +153,8 @@ $("#button-cari").click(function() {
     var film = movies.find(function(m){ return m[0] == item[0] });
     var idImdb = links.find(function(l){ return l[0] == item[0] })[1];
     var judul = film[1], genre = film[2].replace(/\|/g, ", ");
-    $("#film-rekomendasi").append("<li class='list-group-item'><button class='btn btn-primary form-inline pull-xs-right' onclick='tambahDariRekomendasi("+film[0]+")'>+</button><a href='http://www.imdb.com/title/tt"+idImdb+"/' target='_blank'>"+judul+"</a><div class='pull-xs-center'><small>"+genre+"</small></div></li>");
-  })
+    $("#film-rekomendasi").append("<li class='list-group-item'><button class='btn btn-primary form-inline pull-xs-right' onclick='tambahDariRekomendasi("+film[0]+")'>+</button><a href='http://www.imdb.com/title/tt"+idImdb+"/' target='_blank'>"+judul+"</a><br><small>"+genre+"</small></li>");
+  });
 });
 
 $(document).ready(function(){
