@@ -1,7 +1,7 @@
 // AMBIL DATA
 // ==========
 var lokasiDataset = "dataset/ml-latest-small/";
-var pakaiEuclidean = window.location.hash.contains("#euclidean");
+var pakaiEuclidean = (window.location.hash.indexOf("#euclidean") != -1);
 var movies, links, autocompleteTitles;
 var kemiripanItem = [];
 var preferensi = {};
