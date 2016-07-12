@@ -31,7 +31,10 @@ body {
 
 .page-header { color: #fff; }
 
-body { background-image: linear-gradient(0deg,#fff,#1880E6,#001351); }
+body { 
+  background-image: linear-gradient(0deg,#fff,#1880E6,#001351); 
+  background-repeat: no-repeat;
+}
 
 .card-rekomendasi { display: none; }
 
