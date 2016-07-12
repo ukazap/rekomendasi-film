@@ -53,6 +53,13 @@ function ubahRating(nomorItem, rating) {
   localStorage.setItem("preferensi", JSON.stringify(preferensi));
 }
 
+function tambahDariRekomendasi(id) {
+  var judulSebelumnya = $("#input-judul").val();
+  $("#input-judul").val(movies.find(function(m){ return m[0] == id })[1]);
+  $("#button-tambah").click();
+  $("#input-judul").val(judulSebelumnya);
+}
+
 $("#button-reset").click(function() {
   if (confirm("Hapus semua film?")) {
     if (confirm("YAKIN?")) {
@@ -128,7 +135,7 @@ $("#button-cari").click(function() {
     var film = movies.find(function(m){ return m[0] == item[0] });
     var idImdb = links.find(function(l){ return l[0] == item[0] })[1];
     var judul = film[1], genre = film[2].replace(/\|/g, ", ");
-    $("#film-rekomendasi").append("<li class='list-group-item'><a href='http://www.imdb.com/title/tt"+idImdb+"/' target='_blank'>"+judul+"</a><div class='pull-xs-center'><small>"+genre+"</small></div></li>");
+    $("#film-rekomendasi").append("<li class='list-group-item'><button class='btn btn-primary form-inline pull-xs-right' onclick='tambahDariRekomendasi("+film[0]+")'>+</button><a href='http://www.imdb.com/title/tt"+idImdb+"/' target='_blank'>"+judul+"</a><div class='pull-xs-center'><small>"+genre+"</small></div></li>");
   })
 });
 
