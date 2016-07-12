@@ -4,6 +4,7 @@ var lokasiDataset = "dataset/ml-latest-small/";
 var pakaiEuclidean = window.location.hash.contains("#euclidean");
 var movies, tags, links, autocompleteTitles;
 var kemiripanItem = [];
+var preferensi = {};
 var req1 = $.get(lokasiDataset+"movies.csv", function(data){ movies = $.csv.toArrays(data); });
 var req2 = $.get(lokasiDataset+"tags.csv", function(data){ tags = $.csv.toArrays(data); });
 var req3 = $.get(lokasiDataset+"links.csv", function(data){ links = $.csv.toArrays(data); });
@@ -22,23 +23,44 @@ $.when(req1, req2, req3, req4).done(function() {
     limit: 10
   });
   // loading selesai
-  $("#loading").fadeOut();
   $("#input-judul").removeAttr("disabled");
   $("#button-tambah").removeAttr("disabled");
   $("#input-judul").val("");
+
+  // baca localStorage
+  if (localStorage.getItem("preferensi") != null) {
+    preferensi = JSON.parse(localStorage.getItem("preferensi"));
+    for (nomor in preferensi) {
+      var inputJudul = movies.find(function(m){ return m[0] == nomor })[1];
+      $("#film-pengguna").append("<li class='list-group-item form-inline' id='item"+nomor+"'><span class='judul'>"+inputJudul+"</span><div class='pull-xs-right'><input type='number' id='rating"+nomor+"' class='form-control' min='0.5' value='"+preferensi[nomor]+"' max='5' step='0.5' onchange='ubahRating("+nomor+")'><button class='btn btn-sm btn-danger form-control' onclick='hapus("+nomor+");'>x</button></li>");
+    }
+    $("#button-reset").show();
+    $(".card-rekomendasi").show();
+    $("#button-cari").click();
+  }
 });
 
 // TAMBAH & HAPUS FILM
 // ===================
 function hapus(nomorItem) {
   $("#item"+nomorItem).remove();
+  delete preferensi[nomorItem];
   $("#film-pengguna").change();
 }
 
+function ubahRating(nomorItem, rating) {
+  preferensi[nomorItem] = Number($("#rating"+nomorItem).val());
+  localStorage.setItem("preferensi", JSON.stringify(preferensi));
+}
+
 $("#button-reset").click(function() {
-  $("#input-judul").val("");
-  $("#film-pengguna").empty();
-  $("#film-pengguna").change();
+  if (confirm("Hapus semua film?")) {
+    if (confirm("YAKIN?")) {
+      $("#input-judul").val("");
+      $("#film-pengguna").empty();
+      $("#film-pengguna").change();
+    }
+  }
 });
 
 $("#button-tambah").click(function() {
@@ -46,15 +68,19 @@ $("#button-tambah").click(function() {
   var judulnyaIni = $(".judul:contains(\""+inputJudul+"\")");
   if (inputJudul != "" && autocompleteTitles.indexOf(inputJudul) != -1 && judulnyaIni.length == 0) {
     var nomor = movies.find(function(m){ return m[1] == inputJudul })[0]
-    $("#film-pengguna").append("<li class='list-group-item form-inline' id='item"+nomor+"'><span class='judul'>"+inputJudul+"</span><div class='pull-xs-right'><input type='number' id='rating"+nomor+"' class='form-control' min='0.5' value='0.5' max='5' step='0.5'><button class='btn btn-sm btn-danger form-control' onclick='hapus("+nomor+");'>x</button></li>");
+    $("#film-pengguna").append("<li class='list-group-item form-inline' id='item"+nomor+"'><span class='judul'>"+inputJudul+"</span><div class='pull-xs-right'><input type='number' id='rating"+nomor+"' class='form-control' min='0.5' value='0.5' max='5' step='0.5' onchange='ubahRating("+nomor+")'><button class='btn btn-sm btn-danger form-control' onclick='hapus("+nomor+");'>x</button></li>");
+    preferensi[nomor] = 0.5;
+    localStorage.setItem("preferensi", JSON.stringify(preferensi));
+    $("#input-judul").val("");
+    $("#film-pengguna").change();
   }
-  $("#input-judul").val("");
-  $("#film-pengguna").change();
 });
 
 $("#film-pengguna").change(function() {
   if ($("#film-pengguna li").length == 0) {
     $("#film-rekomendasi").empty();
+    preferensi = {};
+    localStorage.removeItem("preferensi");
     $("#button-reset").hide();
     $(".card-rekomendasi").hide();
   } else {
@@ -63,20 +89,19 @@ $("#film-pengguna").change(function() {
   }
 });
 
-
 // CARI REKOMENDASI
 // ================
 function cariRekomendasi(ratingPengguna, kemiripanItem) {
   scores = {}
   totalKemiripan = {}
   // Looping item2 yang di-rating oleh pengguna
-  ratingPengguna.forEach(function(r) {
-    var item = r[0], rating = r[1];
+  for (r in ratingPengguna) {
+    var item = r, rating = ratingPengguna[r];
     // Looping item2 yang mirip
     kemiripanItem[item].forEach(function(k) {
       var item2 = k[0], kemiripan = k[1];
       // Abaikan bila pengguna sudah me-rating item ini
-      if (ratingPengguna.find(function(ir){  return ir[0] == item2 }) != 1) {
+      if (!ratingPengguna.hasOwnProperty(item2)) {
         // Jumlah bobot kemiripan dikali kemiripan
         scores[item2] || (scores[item2] = 0)
         scores[item2] += kemiripan * rating;
@@ -85,7 +110,8 @@ function cariRekomendasi(ratingPengguna, kemiripanItem) {
         totalKemiripan[item2] += kemiripan
       }
     });
-  });
+  }
+
   // Bagi setiap total scores dengan total bobot kemiripan u/ memperoleh rata-rata
   var ranking = [];
   for (item in scores) {
@@ -97,12 +123,6 @@ function cariRekomendasi(ratingPengguna, kemiripanItem) {
 
 $("#button-cari").click(function() {
   $("#film-rekomendasi").empty();
-  var preferensi = []
-  $("#film-pengguna li").each(function() {
-    var id = $(this).attr("id").replace("item","");
-    var rating = $("#rating"+id).val();
-    preferensi.push([id, rating]);
-  });
   var rekomendasi = cariRekomendasi(preferensi, kemiripanItem);
   rekomendasi.forEach(function(item) {
     var film = movies.find(function(m){ return m[0] == item[0] });
