@@ -25,7 +25,7 @@ $.when(req1, req2, req3, req4).done(function() {
   // loading selesai
   $("#input-judul").removeAttr("disabled");
   $("#button-tambah").removeAttr("disabled");
-  $("#input-judul").val("");
+  $("#loading").remove();
 
   // baca localStorage
   if (localStorage.getItem("preferensi") != null) {
