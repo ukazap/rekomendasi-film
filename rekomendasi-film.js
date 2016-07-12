@@ -2,13 +2,12 @@
 // ==========
 var lokasiDataset = "dataset/ml-latest-small/";
 var pakaiEuclidean = window.location.hash.contains("#euclidean");
-var movies, tags, links, autocompleteTitles;
+var movies, links, autocompleteTitles;
 var kemiripanItem = [];
 var preferensi = {};
 var req1 = $.get(lokasiDataset+"movies.csv", function(data){ movies = $.csv.toArrays(data); });
-var req2 = $.get(lokasiDataset+"tags.csv", function(data){ tags = $.csv.toArrays(data); });
-var req3 = $.get(lokasiDataset+"links.csv", function(data){ links = $.csv.toArrays(data); });
-var req4 = $.get(lokasiDataset+(pakaiEuclidean ? "kemiripan-euclidean.csv" : "kemiripan.csv"), function(data){ 
+var req2 = $.get(lokasiDataset+"links.csv", function(data){ links = $.csv.toArrays(data); });
+var req3 = $.get(lokasiDataset+(pakaiEuclidean ? "kemiripan-euclidean.csv" : "kemiripan.csv"), function(data){ 
   $.csv.toArrays(data).slice(1).forEach(function(row) {
     var idFilm = row[0];
     if (typeof(kemiripanItem[idFilm]) == "undefined") { kemiripanItem[idFilm] = []; }
@@ -16,7 +15,7 @@ var req4 = $.get(lokasiDataset+(pakaiEuclidean ? "kemiripan-euclidean.csv" : "ke
   });
 });
 
-$.when(req1, req2, req3, req4).done(function() {
+$.when(req1, req2, req3).done(function() {
   autocompleteTitles = movies.slice(1).map(function(movie) { return movie[1]; });
   $("#input-judul").autocomplete({
     source: [autocompleteTitles],
