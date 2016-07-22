@@ -152,7 +152,7 @@ $("#button-cari").click(function() {
     var film = movies.find(function(m){ return m[0] == item[0] });
     var idImdb = links.find(function(l){ return l[0] == item[0] })[1];
     var judul = film[1], genre = film[2].replace(/\|/g, ", ");
-    $("#film-rekomendasi").append("<li class='list-group-item'><button class='btn btn-primary form-inline pull-xs-right' onclick='tambahDariRekomendasi("+film[0]+")'>+</button><a href='http://www.imdb.com/title/tt"+idImdb+"/' target='_blank'>"+judul+"</a><br><small>"+genre+"</small></li>");
+    $("#film-rekomendasi").append("<li class='list-group-item'><button class='btn btn-primary form-inline pull-xs-right' onclick='tambahDariRekomendasi("+film[0]+")'>sudah nonton</button><a href='http://www.imdb.com/title/tt"+idImdb+"/' target='_blank'>"+judul+"</a><br><small>"+genre+"</small></li>");
   });
 });
 
